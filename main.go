@@ -21,7 +21,7 @@ var configPath = "config.json"
 var bot *tgbotapi.BotAPI
 
 const ojiPage = "http://olimpiada.info/oji2017/index.php?cid=rezultate"
-const sleepSeconds = 1
+const sleepSeconds = 30
 
 func (c *Config) readConfig(fp string) error {
 	buf, err := ioutil.ReadFile(fp)
@@ -74,18 +74,17 @@ func main() {
 	}
 	for true {
 		page1 := fetchWebPage(ojiPage)
+		log.Println("Zzz...")
 		time.Sleep(sleepSeconds * time.Second)
 		page2 := fetchWebPage(ojiPage)
 		dmp := diffmatchpatch.New()
 		diff := dmp.DiffMain(page1, page2, false)
 		if !diffEqual(diff) {
 			log.Println("Sending message")
-			msg := tgbotapi.NewMessageToChannel(conf.ChannelName, "S-a actualizat pagina!")
+			msg := tgbotapi.NewMessageToChannel(conf.ChannelName, "oji_bot: S-a actualizat pagina!")
 			bot.Send(msg)
 		} else {
 			log.Println("Pages equal")
 		}
-		log.Println("Zzz...")
-		time.Sleep(sleepSeconds * time.Second)
 	}
 }
